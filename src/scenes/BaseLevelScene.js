@@ -13,8 +13,12 @@ export class BaseLevelScene extends Phaser.Scene {
     create() {
         const titleButton = new TitleButton(this, 40, 40, 'back_btn');
         titleButton.on('clicked', () => {
-            this.scene.start('TitleScene');
+            this.onBackButtonClicked();
         });
+    }
+
+    onBackButtonClicked() {
+        this.scene.start('TitleScene');
     }
 
     update() {
