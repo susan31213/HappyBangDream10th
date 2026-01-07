@@ -19,7 +19,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     create() {
-        this.sound.play('bgm', { loop: true });
+        this.sound.play('bgm', { loop: true, volume: 0.5 });
 
         this.addButton(190, 200, 'poppinparty', 'PoppinPartyScene');
         this.addButton(530, 200, 'afterglow', 'AfterglowScene');
@@ -36,8 +36,6 @@ export class TitleScene extends Phaser.Scene {
 
 
     }
-
-    exit
 
     addButton(x, y, imageKey, sceneToStart) {
         const button = this.add.image(x, y, imageKey);
