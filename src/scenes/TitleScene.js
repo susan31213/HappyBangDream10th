@@ -19,7 +19,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     create() {
-        this.sound.play('bgm', { loop: true, volume: 0.5 });
+        this.sound.play('bgm', { loop: true, volume: 0.3 });
 
         this.addButton(190, 200, 'poppinparty', 'PoppinPartyScene');
         this.addButton(530, 200, 'afterglow', 'AfterglowScene');
@@ -28,7 +28,7 @@ export class TitleScene extends Phaser.Scene {
         this.addButton(190, 600, 'hellowhappyworld', 'HelloHappyWorldScene');
         this.addButton(530, 600, 'morfonica', 'MorfonicaScene');
         this.addButton(190, 800, 'raiseasuilen', 'RaiseASuilenScene');
-        this.addButton(530, 800, 'mygo', 'MyGoScene');
+        this.addButton(530, 800, 'mygo', 'MyGoScene', {roundNum: 0});
         this.addButton(190, 1000, 'avemujica', 'AveMujicaScene');
     }
 
@@ -37,12 +37,12 @@ export class TitleScene extends Phaser.Scene {
 
     }
 
-    addButton(x, y, imageKey, sceneToStart) {
+    addButton(x, y, imageKey, sceneToStart, data = {}) {
         const button = this.add.image(x, y, imageKey);
         button.setInteractive();
 
         button.on('pointerdown', () => {
-            this.scene.start(sceneToStart);
+            this.scene.start(sceneToStart, data);
             this.sound.stopAll();
         });
 
