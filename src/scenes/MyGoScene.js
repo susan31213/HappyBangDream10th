@@ -1,11 +1,11 @@
 import { BaseLevelScene } from './BaseLevelScene.js';
+import { HandGrabStoneAnimation } from '../components/HandGrabStoneAnimation.js';
 
 export class MyGoScene extends BaseLevelScene {
 
     constructor() {
         super('MyGoScene');
         this.roundNum = 0;
-        console.log('MyGoScene constructor');
     }
 
     static ROUND_COUNT = 3;
@@ -17,11 +17,11 @@ export class MyGoScene extends BaseLevelScene {
         'star',
     ];
     static STONE_NAMES = {
-        'stone1': '学校で拾いたい石',
-        'stone2': '3年前、海で拾った石',
-        'stone3': '公園で見つけた石',
-        'stone4': '川辺で拾った石',
-        'stone5': '地下3メートルで見つけた石',
+        'stone1': '今日つまづいた石',
+        'stone2': '公園の砂場を3m掘ったところで出た石',
+        'stone3': '修学旅行先で出会った石',
+        'stone4': 'アリの巣の入口を塞いでいた石',
+        'stone5': '河原で見つけた石',
         'star1': '夜空に輝く星',
         'star2': '宇宙から届いた星',
         'star3': 'ガルパをより楽しめる星',
@@ -30,11 +30,14 @@ export class MyGoScene extends BaseLevelScene {
     init(data) {
         this.roundNum = 0;
         this.roundNum = data && data.roundNum ? data.roundNum : 0;
-        console.log(`MyGoScene init with roundNum: ${this.roundNum}, data: ${JSON.stringify(data)}`);
     }
 
     preload() {
         super.preload();
+        this.load.font('futehodo', 'assets/Futehodo-MaruGothic.otf', 'opentype');
+        this.load.image('showing_bg', 'assets/mygo/showing_bg.png');
+        this.load.image('hand_grab', 'assets/mygo/hand_grab.png');
+        this.load.image('hand_release', 'assets/mygo/hand_release.png');
         this.load.image('selecting_bg', 'assets/mygo/selecting_bg.png');
         this.load.image('clear0', 'assets/mygo/clear0.png');
         this.load.image('clear1', 'assets/mygo/clear1.png');
@@ -54,11 +57,11 @@ export class MyGoScene extends BaseLevelScene {
 
         // round text
         this.add.text(
-            this.cameras.main.centerX,
-            50,
+            this.cameras.main.width - 30,
+            this.cameras.main.height - 50,
             `レベル ${this.roundNum + 1}`,
-            { fontSize: '32px', color: '#000000' }
-        ).setOrigin(0.5);
+            { fontFamily: 'futehodo', fontSize: '36px', color: '#28282840' }
+        ).setOrigin(1.0, 0.5);
 
         // only last round, 50% chance to select 'star', 50% chance to select 'stone'
         this.stoneType = this.roundNum === MyGoScene.ROUND_COUNT - 1 && Phaser.Math.Between(1, 100) >= 50 ? 'star' : 'stone';
@@ -78,40 +81,36 @@ export class MyGoScene extends BaseLevelScene {
             }
         }
 
-        // show each stone on the screen for 1 second
+        // add showing background
+        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'showing_bg').setDepth(-1);
+
+        // show each stone with hand animation
         selectedStones.forEach((stoneKey, index) => {
-            this.time.delayedCall(index * 2000 + (index + 1) * 500, () => {
-                const stone = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, stoneKey);
-                const nameText = this.add.text(
-                    this.cameras.main.centerX,
-                    this.cameras.main.centerY + 100,
-                    selectedStoneNames[index],
-                    { fontSize: '24px', color: '#000000' }
-                ).setOrigin(0.5);
-                this.time.delayedCall(1000, () => {
-                    stone.destroy();
-                    nameText.destroy();
-                });
+            this.time.delayedCall(index * 3500, () => {
+                const handGrabStoneAnimation = new HandGrabStoneAnimation(this, 360, -280, stoneKey, MyGoScene.STONE_NAMES[stoneKey]);
+                this.add.existing(handGrabStoneAnimation);
+                handGrabStoneAnimation.playAnimation();
             });
         });
 
         // after showing all stones, show random one stone from selected stones
         const answerStoneKey = this.stoneType === 'star' ? 'star3' : selectedStones[Phaser.Math.Between(0, MyGoScene.STONE_COUNT - 1)];
-        this.time.delayedCall(MyGoScene.STONE_COUNT * 2000 + (MyGoScene.STONE_COUNT + 1) * 500, () => {
+        this.time.delayedCall(MyGoScene.STONE_COUNT * 3500 + (MyGoScene.STONE_COUNT + 1) * 500, () => {
             this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'selecting_bg').setDepth(-1);
             this.add.text(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY,
                 `${MyGoScene.STONE_NAMES[answerStoneKey]}はどれ？`,
-                { fontSize: '24px', color: '#000000' }
+                { fontFamily: 'futehodo', fontSize: '24px', color: '#282828' }
             ).setOrigin(0.5);
         });
 
         // show all stones in random order at the center for selection
-        this.time.delayedCall(MyGoScene.STONE_COUNT * 2000 + (MyGoScene.STONE_COUNT + 1) * 500, () => {
+        this.time.delayedCall(MyGoScene.STONE_COUNT * 3500 + (MyGoScene.STONE_COUNT + 1) * 500, () => {
             Phaser.Utils.Array.Shuffle(selectedStones);
             selectedStones.forEach((stoneKey, index) => {
                 const stone = this.add.image(this.cameras.main.centerX - 150 + index * 150, this.cameras.main.centerY - 100, stoneKey).setInteractive();
+                stone.scale = 0.5;
                 stone.on('pointerdown', () => {
                     if (stoneKey === answerStoneKey) {
                         this.showResult(true);
@@ -119,6 +118,14 @@ export class MyGoScene extends BaseLevelScene {
                         this.showResult(false);
                     }
                 });
+                if (this.isDebug && stoneKey === answerStoneKey) {
+                    this.add.text(
+                        this.cameras.main.centerX - 150 + index * 150,
+                        470,
+                        "↓",
+                        { fontSize: '50px', color: '#ff0000' }
+                    ).setOrigin(0.5);
+                }
             });
         });
     }
