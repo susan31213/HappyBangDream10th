@@ -57,11 +57,11 @@ export class MyGoScene extends BaseLevelScene {
 
         // round text
         this.add.text(
-            this.cameras.main.width - 30,
+            30,
             this.cameras.main.height - 50,
             `レベル ${this.roundNum + 1}`,
             { fontFamily: 'futehodo', fontSize: '36px', color: '#28282840' }
-        ).setOrigin(1.0, 0.5);
+        ).setOrigin(0.0, 0.5);
 
         // only last round, 50% chance to select 'star', 50% chance to select 'stone'
         this.stoneType = this.roundNum === MyGoScene.ROUND_COUNT - 1 && Phaser.Math.Between(1, 100) >= 50 ? 'star' : 'stone';
