@@ -95,7 +95,7 @@ export class MyGoScene extends BaseLevelScene {
 
         // after showing all stones, show random one stone from selected stones
         const answerStoneKey = this.stoneType === 'star' ? 'star3' : selectedStones[Phaser.Math.Between(0, MyGoScene.STONE_COUNT - 1)];
-        this.time.delayedCall(MyGoScene.STONE_COUNT * 3500 + (MyGoScene.STONE_COUNT + 1) * 500, () => {
+        this.time.delayedCall(MyGoScene.STONE_COUNT * 3500 + 500, () => {
             this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'selecting_bg').setDepth(-1);
             this.add.text(
                 this.cameras.main.centerX,
@@ -106,7 +106,7 @@ export class MyGoScene extends BaseLevelScene {
         });
 
         // show all stones in random order at the center for selection
-        this.time.delayedCall(MyGoScene.STONE_COUNT * 3500 + (MyGoScene.STONE_COUNT + 1) * 500, () => {
+        this.time.delayedCall(MyGoScene.STONE_COUNT * 3500 + 500, () => {
             Phaser.Utils.Array.Shuffle(selectedStones);
             selectedStones.forEach((stoneKey, index) => {
                 const stone = this.add.image(this.cameras.main.centerX - 150 + index * 150, this.cameras.main.centerY - 100, stoneKey).setInteractive();
