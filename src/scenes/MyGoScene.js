@@ -118,13 +118,15 @@ export class MyGoScene extends BaseLevelScene {
                         this.showResult(false);
                     }
                 });
-                if (this.isDebug && stoneKey === answerStoneKey) {
-                    this.add.text(
-                        this.cameras.main.centerX - 150 + index * 150,
-                        470,
-                        "↓",
-                        { fontSize: '50px', color: '#ff0000' }
-                    ).setOrigin(0.5);
+                if (stoneKey === answerStoneKey) {
+                    this.debugLayer.add(
+                        this.add.text(
+                            this.cameras.main.centerX - 150 + index * 150,
+                            470,
+                            "↓",
+                            { fontSize: '50px', color: '#ff0000' }
+                        ).setOrigin(0.5)
+                    );
                 }
             });
         });

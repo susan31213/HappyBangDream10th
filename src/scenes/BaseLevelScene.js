@@ -13,14 +13,19 @@ export class BaseLevelScene extends Phaser.Scene {
     }
 
     create() {
+        this.debugLayer = this.add.layer();
+        this.debugLayer.setVisible(this.isDebug);
+
         const titleButton = new TitleButton(this, 40, 40, 0.25, 'back_btn');
         titleButton.on('clicked', () => {
             this.onBackButtonClicked();
         });
+        
         const debugToolButton = new TitleButton(this, 120, 40, this.isDebug ? 1.0 : 0.25, 'debug_tool');
         debugToolButton.on('clicked', () => {
             this.isDebug = !this.isDebug;
             debugToolButton.buttonImage.setAlpha(this.isDebug ? 1.0 : 0.25);
+            this.debugLayer.setVisible(this.isDebug);
         });
     }
 
