@@ -140,9 +140,10 @@ export class MyGoScene extends BaseLevelScene {
     }
 
     showResult(isCorrect) {
-        // hide all children except TitleButton
+        // hide all children except TitleButton and showing bg
         this.children.each((child) => {
-            if (child.constructor.name === 'TitleButton') {
+            if (child.constructor.name === 'TitleButton' ||
+                child.texture && child.texture.key === 'showing_bg') {
                 return;
             }
             child.setVisible(false);
@@ -170,7 +171,7 @@ export class MyGoScene extends BaseLevelScene {
             this.cameras.main.centerX,
             this.cameras.main.centerY + 550,
             resultText,
-            { fontSize: '30px', color: '#ff0000' }
+            { fontFamily: 'futehodo', fontSize: '30px', color: '#ff0000' }
         ).setOrigin(0.5);
     }
 
@@ -179,7 +180,7 @@ export class MyGoScene extends BaseLevelScene {
             this.cameras.main.centerX,
             this.cameras.main.centerY + 600,
             'もう一度挑戦',
-            { fontSize: '24px', color: '#0000ff' }
+            { fontFamily: 'futehodo', fontSize: '36px', color: '#282828' }
         ).setOrigin(0.5).setInteractive();
         retryText.on('pointerdown', () => {
             this.scene.restart({roundNum: 0});
@@ -204,11 +205,15 @@ export class MyGoScene extends BaseLevelScene {
         const nextText = this.add.text(
             this.cameras.main.centerX,
             this.cameras.main.centerY,
-            'おめでとう！次のレベルへ',
-            { fontSize: '24px', color: '#0000ff' }
+            'おめでとう！タップして次のレベルへ',
+            { fontFamily: 'futehodo', fontSize: '36px', color: '#282828' }
         ).setOrigin(0.5).setInteractive();
-        nextText.on('pointerdown', () => {
-            this.scene.restart({roundNum: this.roundNum + 1});
+
+        // after 0.5 seconds, user can tap anywhere to go to next round
+        this.time.delayedCall(500, () => {
+            this.input.once('pointerdown', () => {
+                this.scene.restart({roundNum: this.roundNum + 1});
+            });
         });
 
         // set all objects interactive false but next button
@@ -224,7 +229,7 @@ export class MyGoScene extends BaseLevelScene {
             this.cameras.main.centerX,
             this.cameras.main.centerY + 600,
             'タイトルへ戻る',
-            { fontSize: '24px', color: '#0000ff' }
+            { fontFamily: 'futehodo', fontSize: '36px', color: '#282828' }
         ).setOrigin(0.5).setInteractive();
         backText.on('pointerdown', () => {
             this.scene.start('TitleScene');
