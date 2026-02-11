@@ -1,3 +1,4 @@
+import { PreloaderScene } from './scenes/PreloaderScene.js';
 import { TitleScene } from './scenes/TitleScene.js';
 import { PoppinPartyScene } from './scenes/PoppinPartyScene.js';
 import { AfterglowScene } from './scenes/AfterglowScene.js';
@@ -20,6 +21,7 @@ const config = {
     pixelArt: false,
     scene: [
         TitleScene,
+        PreloaderScene,
         PoppinPartyScene,
         AfterglowScene,
         PastelPalettesScene,

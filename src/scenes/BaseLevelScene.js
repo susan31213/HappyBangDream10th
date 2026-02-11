@@ -8,11 +8,14 @@ export class BaseLevelScene extends Phaser.Scene {
     }
 
     preload() {
+        this.scene.launch('PreloaderScene');
         this.load.image('back_btn', 'assets/back.png');
         this.load.image('debug_tool', 'assets/debug_tool.png');
     }
 
     create() {
+        this.scene.stop('PreloaderScene');
+
         this.debugLayer = this.add.layer();
         this.debugLayer.setVisible(this.isDebug);
 

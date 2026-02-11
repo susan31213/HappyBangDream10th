@@ -5,6 +5,7 @@ export class TitleScene extends Phaser.Scene {
     }
 
     preload() {
+        this.scene.launch('PreloaderScene');
         this.load.audio('bgm', 'assets/sound/shimtone-raburizu.mp3');
 
         this.load.image('poppinparty', 'assets/logo/Poppin\'Party_logo.png');
@@ -19,6 +20,8 @@ export class TitleScene extends Phaser.Scene {
     }
 
     create() {
+        this.scene.stop('PreloaderScene');
+    
         this.sound.play('bgm', { loop: true, volume: 0.3 });
 
         this.addButton(190, 200, 'poppinparty', 'PoppinPartyScene');

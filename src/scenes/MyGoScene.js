@@ -34,7 +34,6 @@ export class MyGoScene extends BaseLevelScene {
 
     preload() {
         super.preload();
-        this.load.font('futehodo', 'assets/Futehodo-MaruGothic.otf', 'opentype');
         this.load.image('showing_bg', 'assets/mygo/showing_bg.png');
         this.load.image('hand_grab', 'assets/mygo/hand_grab.png');
         this.load.image('hand_release', 'assets/mygo/hand_release.png');
