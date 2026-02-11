@@ -1,5 +1,6 @@
 import { BaseLevelScene } from './BaseLevelScene.js';
 import { HandGrabStoneAnimation } from '../components/HandGrabStoneAnimation.js';
+import { SnsShareButtons } from '../components/SnsShareButtons.js';
 
 export class MyGoScene extends BaseLevelScene {
 
@@ -49,6 +50,7 @@ export class MyGoScene extends BaseLevelScene {
         for (let i = 1; i <= MyGoScene.STAR_TYPE_COUNT; i++) {
             this.load.image(`star${i}`, `assets/mygo/stones/star${i}.png`);
         }
+        SnsShareButtons.preload(this);
     }
 
     create() {
@@ -183,6 +185,13 @@ export class MyGoScene extends BaseLevelScene {
                 child.disableInteractive();
             }
         });
+
+        // add sns share buttons
+        this.snsButtons = new SnsShareButtons(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY + 400
+        );
     }
 
     createNextRoundButton() {
@@ -214,6 +223,13 @@ export class MyGoScene extends BaseLevelScene {
         backText.on('pointerdown', () => {
             this.scene.start('TitleScene');
         });
+
+        // add sns share buttons
+        this.snsButtons = new SnsShareButtons(
+            this,
+            this.cameras.main.centerX,
+            this.cameras.main.centerY + 400
+        );
     }
 
     onBackButtonClicked() {
