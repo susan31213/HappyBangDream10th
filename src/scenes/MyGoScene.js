@@ -50,11 +50,17 @@ export class MyGoScene extends BaseLevelScene {
         for (let i = 1; i <= MyGoScene.STAR_TYPE_COUNT; i++) {
             this.load.image(`star${i}`, `assets/mygo/stones/star${i}.png`);
         }
+        this.load.audio('mygo_bgm', 'assets/sound/midorinokouen.mp3');
         SnsShareButtons.preload(this);
     }
 
     create() {
         super.create();
+
+        // play bgm if no bgm is playing
+        if (this.sound.getAllPlaying().length === 0) {
+            this.sound.play('mygo_bgm', { loop: true, volume: 0.5 });
+        }
 
         // round text
         this.add.text(
@@ -234,6 +240,7 @@ export class MyGoScene extends BaseLevelScene {
 
     onBackButtonClicked() {
         this.roundNum = 0;
+        this.sound.stopAll();
         super.onBackButtonClicked();
     }
 
