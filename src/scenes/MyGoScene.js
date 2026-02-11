@@ -51,6 +51,11 @@ export class MyGoScene extends BaseLevelScene {
             this.load.image(`star${i}`, `assets/mygo/stones/star${i}.png`);
         }
         this.load.audio('mygo_bgm', 'assets/sound/midorinokouen.mp3');
+        this.load.audio('put_stone_se', 'assets/sound/se/put_stone.mp3');
+        this.load.audio('quiz_show_se', 'assets/sound/se/quiz_show.mp3');
+        this.load.audio('quiz_correct', 'assets/sound/se/quiz_correct.mp3');
+        this.load.audio('success', 'assets/sound/se/success.mp3');
+        this.load.audio('failure', 'assets/sound/se/failure.mp3');
         SnsShareButtons.preload(this);
     }
 
@@ -136,6 +141,7 @@ export class MyGoScene extends BaseLevelScene {
                     );
                 }
             });
+            this.sound.play('quiz_show_se', { volume: 1.0 });
         });
     }
 
@@ -157,6 +163,7 @@ export class MyGoScene extends BaseLevelScene {
             } else {
                 this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'clear3').setDepth(-1);
             }
+            this.sound.play('success', { volume: 1.0 });
         }
         if (!isCorrect) {
             resultText = this.roundNum === 0 ? '残念！あなたは燈の石検定不合格です！' : `間違えた！あなたは燈の石検定${this.roundNum}級です！`;
@@ -199,6 +206,8 @@ export class MyGoScene extends BaseLevelScene {
             this.cameras.main.centerX,
             this.cameras.main.centerY + 400
         );
+
+        this.sound.play(this.roundNum === 0 ? 'failure' : 'success', { volume: 1.0 });
     }
 
     createNextRoundButton() {
@@ -222,6 +231,8 @@ export class MyGoScene extends BaseLevelScene {
                 child.disableInteractive();
             }
         });
+
+        this.sound.play('quiz_correct', { volume: 1.0 });
     }
 
     createBackButton() {

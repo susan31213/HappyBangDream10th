@@ -28,6 +28,7 @@ export class HandGrabStoneAnimation extends Phaser.GameObjects.Container {
             duration: 1000,
             ease: 'Sine.easeInOut',
             onComplete: () => {
+                this.scene.sound.play('put_stone_se', { volume: 1.0 });
                 this.handImage.setTexture('hand_release');
                 this.easeInContainer.remove(this.handImage, false);
                 this.easeOutContainer.add(this.handImage);
