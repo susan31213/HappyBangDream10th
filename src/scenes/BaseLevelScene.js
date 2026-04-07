@@ -23,7 +23,7 @@ export class BaseLevelScene extends Phaser.Scene {
         const titleButton = new TitleButton(this, 40, 40, 0.25, 'back_btn');
         titleButton.on('clicked', () => {
             this.onBackButtonClicked();
-        });
+        }).setName('backButton');
 
         const audioButton = new TitleButton(this, 120, 40, this.sound.mute ? 0.25 : 1.0, 'audio_btn');
         audioButton.on('clicked', () => {
@@ -34,14 +34,14 @@ export class BaseLevelScene extends Phaser.Scene {
                 this.sound.setMute(true);
                 audioButton.buttonImage.setAlpha(0.25);
             }
-        });
+        }).setName('audioButton');
         
         const debugToolButton = new TitleButton(this, 680, 40, this.isDebug ? 1.0 : 0.25, 'debug_tool');
         debugToolButton.on('clicked', () => {
             this.isDebug = !this.isDebug;
             debugToolButton.buttonImage.setAlpha(this.isDebug ? 1.0 : 0.25);
             this.debugLayer.setVisible(this.isDebug);
-        });
+        }).setName('debugToolButton');
     }
 
     onBackButtonClicked() {

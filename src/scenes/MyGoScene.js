@@ -34,6 +34,7 @@ export class MyGoScene extends BaseLevelScene {
 
     preload() {
         super.preload();
+        this.load.image('mygo_back_btn', 'assets/mygo/back_btn.png');
         this.load.image('title', 'assets/mygo/title.png');
         this.load.image('start_button', 'assets/mygo/start_button.png');
         this.load.image('showing_bg', 'assets/mygo/showing_bg.png');
@@ -66,6 +67,13 @@ export class MyGoScene extends BaseLevelScene {
 
     create() {
         super.create();
+
+        // set mygo back button texture
+        const backButton = this.children.getByName('backButton');
+        if (backButton) {
+            backButton.buttonImage.setTexture('mygo_back_btn');
+            backButton.buttonImage.setAlpha(1.0);
+        }
 
         if (this.roundNum === 0) {
             this.showTitle();
