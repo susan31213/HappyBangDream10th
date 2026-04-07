@@ -40,6 +40,9 @@ export class MyGoScene extends BaseLevelScene {
         this.load.image('hand_grab', 'assets/mygo/hand_grab.png');
         this.load.image('hand_release', 'assets/mygo/hand_release.png');
         this.load.image('selecting_bg', 'assets/mygo/selecting_bg.png');
+        this.load.image('level1', 'assets/mygo/level1.png');
+        this.load.image('level2', 'assets/mygo/level2.png');
+        this.load.image('level3', 'assets/mygo/level3.png');
         this.load.image('clear0', 'assets/mygo/clear0.png');
         this.load.image('clear1', 'assets/mygo/clear1.png');
         this.load.image('clear2', 'assets/mygo/clear2.png');
@@ -128,13 +131,8 @@ export class MyGoScene extends BaseLevelScene {
     }
 
     addRoundText() {
-        if (!this.children.getByName('roundText')) {
-            this.add.text(
-                30,
-                this.cameras.main.height - 50,
-                `レベル ${this.roundNum + 1}`,
-                { fontFamily: 'futehodo', fontSize: '36px', color: '#28282840' }
-            ).setOrigin(0.0, 0.5).setName('roundText');
+        if (!this.children.getByName('levelImage')) {
+            this.add.image(this.cameras.main.width - 302, this.cameras.main.height - 110, `level${this.roundNum + 1}`).setOrigin(0.0, 0.5).setName('levelImage');
         }
     }
 
@@ -219,6 +217,11 @@ export class MyGoScene extends BaseLevelScene {
                 }
             });
             this.sound.play('quiz_show_se', { volume: 1.0 });
+            
+            let levelImage = this.children.getByName('levelImage');
+            if (levelImage) {
+                this.children.getByName('levelImage').setVisible(false);
+            }
         });
     }
 
