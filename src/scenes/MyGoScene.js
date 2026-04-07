@@ -35,6 +35,7 @@ export class MyGoScene extends BaseLevelScene {
     preload() {
         super.preload();
         this.load.image('title', 'assets/mygo/title.png');
+        this.load.image('start_button', 'assets/mygo/start_button.png');
         this.load.image('showing_bg', 'assets/mygo/showing_bg.png');
         this.load.image('hand_grab', 'assets/mygo/hand_grab.png');
         this.load.image('hand_release', 'assets/mygo/hand_release.png');
@@ -72,13 +73,25 @@ export class MyGoScene extends BaseLevelScene {
 
     showTitle() {
         const title = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'title').setDepth(-1);
-        // create tappable area for for starting game
-        const titleArea = this.add.rectangle(220+140, 1040+65, 280, 130, 0x000000, 0);
-        titleArea.setInteractive();
-        titleArea.on('pointerdown', () => {
-            title.destroy();
-            titleArea.destroy();
-
+        // create start button for starting game
+        // when press down start button, make button darker
+        // when press down and hold start button but move cursor out of button, make button normal
+        // when release start button, play taiko_dodo se, make button normal and start game
+        const startButton = this.add.image(360, 1105, 'start_button');
+        startButton.setInteractive();
+        startButton.on('pointerover', () => {
+            startButton.setScale(1.2);
+        });
+        startButton.on('pointerout', () => {
+            startButton.setScale(1.0);
+        });
+        startButton.on('pointerdown', () => {
+            startButton.setTint(0xaaaaaa);
+        });
+        startButton.on('pointerout', () => {
+            startButton.clearTint();
+        });
+        startButton.on('pointerup', () => {
             this.sound.play('taiko_dodo', { volume: 1.0 });
 
             // black out effect for 0.5, black in effect for 0.5 second and start game
@@ -89,6 +102,8 @@ export class MyGoScene extends BaseLevelScene {
                 alpha: { from: 0, to: 1 },
                 duration: 1000,
                 onComplete: () => {
+                    title.destroy();
+                    startButton.destroy();
                     this.addBg();
                     this.addRoundText();
 
