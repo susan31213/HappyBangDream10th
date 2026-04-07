@@ -21,7 +21,9 @@ export class TitleScene extends Phaser.Scene {
 
     create() {
         this.scene.stop('PreloaderScene');
-    
+
+        // stop all bgm when enter the title scene
+        this.sound.stopAll();
         this.sound.play('bgm', { loop: true, volume: 0.3 });
 
         this.addButton(190, 200, 'poppinparty', 'PoppinPartyScene');
