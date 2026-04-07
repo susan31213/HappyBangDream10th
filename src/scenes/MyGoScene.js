@@ -29,12 +29,12 @@ export class MyGoScene extends BaseLevelScene {
     };
 
     init(data) {
-        this.roundNum = 0;
         this.roundNum = data && data.roundNum ? data.roundNum : 0;
     }
 
     preload() {
         super.preload();
+        this.load.image('title', 'assets/mygo/title.png');
         this.load.image('showing_bg', 'assets/mygo/showing_bg.png');
         this.load.image('hand_grab', 'assets/mygo/hand_grab.png');
         this.load.image('hand_release', 'assets/mygo/hand_release.png');
@@ -51,6 +51,7 @@ export class MyGoScene extends BaseLevelScene {
             this.load.image(`star${i}`, `assets/mygo/stones/star${i}.png`);
         }
         this.load.audio('mygo_bgm', 'assets/sound/midorinokouen.mp3');
+        this.load.audio('taiko_dodo', 'assets/sound/se/taiko_dodo.mp3');
         this.load.audio('put_stone_se', 'assets/sound/se/put_stone.mp3');
         this.load.audio('quiz_show_se', 'assets/sound/se/quiz_show.mp3');
         this.load.audio('quiz_correct', 'assets/sound/se/quiz_correct.mp3');
@@ -62,18 +63,82 @@ export class MyGoScene extends BaseLevelScene {
     create() {
         super.create();
 
+        if (this.roundNum === 0) {
+            this.showTitle();
+        } else {
+            this.startGame();
+        }
+    }
+
+    showTitle() {
+        const title = this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'title').setDepth(-1);
+        // create tappable area for for starting game
+        const titleArea = this.add.rectangle(220+140, 1040+65, 280, 130, 0x000000, 0);
+        titleArea.setInteractive();
+        titleArea.on('pointerdown', () => {
+            title.destroy();
+            titleArea.destroy();
+
+            this.sound.play('taiko_dodo', { volume: 1.0 });
+
+            // black out effect for 0.5, black in effect for 0.5 second and start game
+            const blackOut = this.add.rectangle(this.cameras.main.centerX, this.cameras.main.centerY, this.cameras.main.width, this.cameras.main.height, 0x000000, 1.0);
+            blackOut.setDepth(1);
+            this.tweens.add({
+                targets: blackOut,
+                alpha: { from: 0, to: 1 },
+                duration: 1000,
+                onComplete: () => {
+                    this.addBg();
+                    this.addRoundText();
+
+                    this.tweens.add({
+                        targets: blackOut,
+                        alpha: { from: 1, to: 0 },
+                        duration: 1000,
+                        onComplete: () => {
+                            blackOut.destroy();
+                            this.startGame();
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    addBg() {
+        if (!this.children.getByName('showing_bg')) {
+            this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'showing_bg').setDepth(-1);
+        }
+    }
+
+    addRoundText() {
+        if (!this.children.getByName('roundText')) {
+            this.add.text(
+                30,
+                this.cameras.main.height - 50,
+                `レベル ${this.roundNum + 1}`,
+                { fontFamily: 'futehodo', fontSize: '36px', color: '#28282840' }
+            ).setOrigin(0.0, 0.5).setName('roundText');
+        }
+    }
+
+    startGame() {
         // play bgm if no bgm is playing
-        if (this.sound.getAllPlaying().length === 0) {
+        let isBgmPlaying = false;
+        const currentPlaying = this.sound.getAllPlaying();
+        for (let i = 0; i < currentPlaying.length; i++) {
+            if (currentPlaying[i].key === 'mygo_bgm') {
+                isBgmPlaying = true;
+                break;
+            }
+        }
+        if (!isBgmPlaying) {
             this.sound.play('mygo_bgm', { loop: true, volume: 0.5 });
         }
 
-        // round text
-        this.add.text(
-            30,
-            this.cameras.main.height - 50,
-            `レベル ${this.roundNum + 1}`,
-            { fontFamily: 'futehodo', fontSize: '36px', color: '#28282840' }
-        ).setOrigin(0.0, 0.5);
+        this.addBg();
+        this.addRoundText();
 
         // only last round, 50% chance to select 'star', 50% chance to select 'stone'
         this.stoneType = this.roundNum === MyGoScene.ROUND_COUNT - 1 && Phaser.Math.Between(1, 100) >= 50 ? 'star' : 'stone';
@@ -92,9 +157,6 @@ export class MyGoScene extends BaseLevelScene {
                 selectedStoneNames.push(MyGoScene.STONE_NAMES[stoneKey]);
             }
         }
-
-        // add showing background
-        this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'showing_bg').setDepth(-1);
 
         // show each stone with hand animation
         selectedStones.forEach((stoneKey, index) => {
