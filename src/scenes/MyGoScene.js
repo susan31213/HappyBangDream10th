@@ -36,12 +36,12 @@ export class MyGoScene extends BaseLevelScene {
         'star2-win': 'ともりんの石検定1級を取りました！',
     };
     static ROUND_NUM_SNS_URLS = {
-        'stone0-lose': 'https://00m.in/JqZNI',  // TOMORI
-        'stone1-lose': 'https://00m.in/uoqaz',  // ANON
-        'stone2-lose': 'https://00m.in/kMpOp',  // TAKI
-        'stone2-win': 'https://00m.in/HXAGO',   // RANA
-        'star2-lose': 'https://00m.in/kMpOp',   // TAKI
-        'star2-win': 'https://00m.in/wtlRF',    // SOYO
+        'stone0-lose': 'https://susan31213.github.io/HappyBangDream10th/html/mygo/clear_0.html',  // TOMORI
+        'stone1-lose': 'https://susan31213.github.io/HappyBangDream10th/html/mygo/clear_1.html',  // ANON
+        'stone2-lose': 'https://susan31213.github.io/HappyBangDream10th/html/mygo/clear_2.html',  // TAKI
+        'stone2-win': 'https://susan31213.github.io/HappyBangDream10th/html/mygo/clear_3.html',   // RANA
+        'star2-lose': 'https://susan31213.github.io/HappyBangDream10th/html/mygo/clear_2.html',   // TAKI
+        'star2-win': 'https://susan31213.github.io/HappyBangDream10th/html/mygo/clear_sp.html',    // SOYO
     };
 
     init(data) {
