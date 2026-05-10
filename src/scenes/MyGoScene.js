@@ -27,6 +27,22 @@ export class MyGoScene extends BaseLevelScene {
         'star2': '宇宙から届いた星',
         'star3': 'ガルパをより楽しめる星',
     };
+    static ROUND_NUM_SNS_TEXTS = {
+        'stone0-lose': 'ともりんの石検定をクリアできなかった...！',
+        'stone1-lose': 'ともりんの石検定3級を取りました！',
+        'stone2-lose': 'ともりんの石検定2級を取りました！',
+        'stone2-win': 'ともりんの石検定1級を取りました！',
+        'star2-lose': 'ともりんの石検定2級を取りました！',
+        'star2-win': 'ともりんの石検定1級を取りました！',
+    };
+    static ROUND_NUM_SNS_URLS = {
+        'stone0-lose': 'https://bit.ly/4uEIiDY',  // TOMORI
+        'stone1-lose': 'https://bit.ly/4uEIiDY',  // ANON
+        'stone2-lose': 'https://bit.ly/4uEIiDY',  // TAKI
+        'stone2-win': 'https://bit.ly/4uEIiDY',   // RANA
+        'star2-lose': 'https://bit.ly/4uEIiDY',   // TAKI
+        'star2-win': 'https://bit.ly/4uEIiDY',    // SOYO
+    };
 
     init(data) {
         this.roundNum = data && data.roundNum ? data.roundNum : 0;
@@ -49,6 +65,8 @@ export class MyGoScene extends BaseLevelScene {
         this.load.image('clear2', 'assets/mygo/clear2.png');
         this.load.image('clear3', 'assets/mygo/clear3.png');
         this.load.image('clear_sp', 'assets/mygo/clear_sp.png');
+        this.load.image('title_btn', 'assets/mygo/title_btn.png');
+        this.load.image('share_btn', 'assets/mygo/share_btn.png');
         for (let i = 1; i <= MyGoScene.STONE_TYPE_COUNT; i++) {
             this.load.image(`stone${i}`, `assets/mygo/stones/stone${i}.png`);
         }
@@ -93,13 +111,11 @@ export class MyGoScene extends BaseLevelScene {
         startButton.on('pointerover', () => {
             startButton.setScale(1.2);
         });
-        startButton.on('pointerout', () => {
-            startButton.setScale(1.0);
-        });
         startButton.on('pointerdown', () => {
             startButton.setTint(0xaaaaaa);
         });
         startButton.on('pointerout', () => {
+            startButton.setScale(1.0);
             startButton.clearTint();
         });
         startButton.on('pointerup', () => {
@@ -243,9 +259,7 @@ export class MyGoScene extends BaseLevelScene {
             child.setVisible(false);
         });
 
-        var resultText = '';
         if (this.roundNum === MyGoScene.ROUND_COUNT - 1 && isCorrect) {
-            resultText = `おめでとう！あなたは燈の石検定${this.roundNum + 1}級です！`
             if (this.stoneType === 'star') {
                 this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, 'clear_sp').setDepth(-1);
             } else {
@@ -254,48 +268,13 @@ export class MyGoScene extends BaseLevelScene {
             this.sound.play('success', { volume: 1.0 });
         }
         if (!isCorrect) {
-            resultText = this.roundNum === 0 ? '残念！あなたは燈の石検定不合格です！' : `間違えた！あなたは燈の石検定${this.roundNum}級です！`;
             this.add.image(this.cameras.main.centerX, this.cameras.main.centerY, this.roundNum === 0 ? 'clear0' : `clear${this.roundNum}`).setDepth(-1);
-            this.createRetryButton();
+            this.createBackButton(isCorrect);
         } else if (this.roundNum !== MyGoScene.ROUND_COUNT - 1) {
             this.createNextRoundButton();
         } else {
-            this.createBackButton();
+            this.createBackButton(isCorrect);
         }
-        this.add.text(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY + 550,
-            resultText,
-            { fontFamily: 'futehodo', fontSize: '30px', color: '#ff0000' }
-        ).setOrigin(0.5);
-    }
-
-    createRetryButton() {
-        const retryText = this.add.text(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY + 600,
-            'もう一度挑戦',
-            { fontFamily: 'futehodo', fontSize: '36px', color: '#282828' }
-        ).setOrigin(0.5).setInteractive();
-        retryText.on('pointerdown', () => {
-            this.scene.restart({roundNum: 0});
-        });
-
-        // set all objects interactive false but retry button
-        this.children.each((child) => {
-            if (child !== retryText) {
-                child.disableInteractive();
-            }
-        });
-
-        // add sns share buttons
-        this.snsButtons = new SnsShareButtons(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY + 400
-        );
-
-        this.sound.play(this.roundNum === 0 ? 'failure' : 'success', { volume: 1.0 });
     }
 
     createNextRoundButton() {
@@ -323,23 +302,44 @@ export class MyGoScene extends BaseLevelScene {
         this.sound.play('quiz_correct', { volume: 1.0 });
     }
 
-    createBackButton() {
-        const backText = this.add.text(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY + 600,
-            'タイトルへ戻る',
-            { fontFamily: 'futehodo', fontSize: '36px', color: '#282828' }
+    createBackButton(isCorrect) {
+        const backbtn = this.add.image(
+            this.cameras.main.centerX + 160,
+            this.cameras.main.centerY + 525,
+            'title_btn'
         ).setOrigin(0.5).setInteractive();
-        backText.on('pointerdown', () => {
-            this.scene.start('TitleScene');
+        backbtn.on('pointerover', () => {
+            backbtn.setScale(1.1);
+        });
+        backbtn.on('pointerdown', () => {
+            backbtn.setTint(0xaaaaaa);
+            this.scene.restart({roundNum: 0});
+        });
+        backbtn.on('pointerout', () => {
+            backbtn.setScale(1.0);
+            backbtn.clearTint();
         });
 
-        // add sns share buttons
-        this.snsButtons = new SnsShareButtons(
-            this,
-            this.cameras.main.centerX,
-            this.cameras.main.centerY + 400
-        );
+        const sharebtn = this.add.image(
+            this.cameras.main.centerX - 160,
+            this.cameras.main.centerY + 525,
+            'share_btn'
+        ).setOrigin(0.5).setInteractive();
+        sharebtn.on('pointerover', () => {
+            sharebtn.setScale(1.1);
+        });
+        sharebtn.on('pointerdown', () => {
+            sharebtn.setTint(0xaaaaaa);
+            const keyStr = this.stoneType + this.roundNum + (isCorrect ? '-win' : '-lose');
+            const url = MyGoScene.ROUND_NUM_SNS_URLS[keyStr] || 'https://bit.ly/4uEIiDY';
+            const text = MyGoScene.ROUND_NUM_SNS_TEXTS[keyStr] + 'あなたは何級？ともりの石検定に挑戦してみてね！';
+            const shareLink = `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+            window.open(shareLink, '_blank', 'width=600,height=500');
+        });
+        sharebtn.on('pointerout', () => {
+            sharebtn.setScale(1.0);
+            sharebtn.clearTint();
+        });
     }
 
     onBackButtonClicked() {
